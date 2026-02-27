@@ -134,6 +134,57 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
+# === Secrets ===
+.env
+.env.*
+!.env.example
+
+# === Logs ===
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# === Build outputs (common web) ===
+dist/
+build/
+out/
+.next/
+.vercel/
+.netlify/
+coverage/
+
+# === Python (if any scripts later) ===
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# === Mobile wrappers (if you do WebView apps later) ===
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+*.apk
+*.aab
+
+# iOS / Xcode
+ios/Pods/
+ios/build/
+*.xcworkspace
+*.xcuserstate
+*.xcuserdata/
+*.ipa
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
