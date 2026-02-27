@@ -552,6 +552,77 @@ function safeJsonParse(value, fallback) {
   }
 }
 
+const SITE_WEBAPP_URL = (window.localStorage.getItem("aq_webapp_url") || "").trim();
+const SITE_SHARED_SECRET = (window.localStorage.getItem("aq_webapp_secret") || "").trim();
+
+function normalizeCategoryForSite(description) {
+  const text = String(description || "").toLowerCase();
+  const has = (...words) => words.some((w) => text.includes(w));
+
+  if (has("яма", "выбои", "асфальт", "дорог", "трещин", "колея", "провал", "бордюр", "тротуар")) {
+    return "Roads";
+  }
+  if (has("фонарь", "свет", "освещ", "ламп", "не горит", "мигает")) {
+    return "Lighting";
+  }
+  if (has("мусор", "контейнер", "свалк", "пакет", "грязь")) {
+    return "Trash";
+  }
+  if (has("вода", "канализа", "теч", "прорв", "тепло", "отоплен", "газ", "труба")) {
+    return "Utilities";
+  }
+  if (has("искрит", "огол", "опасно", "обрыв", "авар", "открыт", "люк", "пожар", "взрыв")) {
+    return "Safety";
+  }
+  return "Unsorted";
+}
+
+function normalizePriorityForSite(description) {
+  const text = String(description || "").toLowerCase();
+  const has = (...words) => words.some((w) => text.includes(w));
+
+  if (
+    has("искрит", "огол", "опасно", "обрыв", "авар", "открыт", "люк", "пожар", "взрыв") ||
+    has("срочно", "утечка газа", "затопление")
+  ) {
+    return "High";
+  }
+
+  if (
+    text.includes("низкий приоритет") ||
+    text.includes("несрочно") ||
+    text.includes("не срочно") ||
+    has("граффити", "наклейк", "листовк", "космет")
+  ) {
+    return "Low";
+  }
+
+  return "Medium";
+}
+
+async function sendRequestToAppsScript(payload) {
+  if (!SITE_WEBAPP_URL || !SITE_SHARED_SECRET) {
+    throw new Error("MISSING_WEBAPP_CONFIG");
+  }
+
+  const res = await fetch(SITE_WEBAPP_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      ...payload,
+      secret: SITE_SHARED_SECRET
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok || !data.ok) {
+    throw new Error(data.error || `HTTP_${res.status}`);
+  }
+  return data;
+}
+
 // ----------------- auth storage -----------------
 function getUsers() {
   const raw = localStorage.getItem(USERS_KEY);
@@ -1091,11 +1162,17 @@ function initDemoForm() {
 
   const categorySelect = el("categorySelect");
   const cityInput = el("cityInput");
+  const chatIdInput = el("chatIdInput");
   const descInput = el("descInput");
   const photoInput = el("photoInput");
   const photoPreview = el("photoPreview");
   const resetBtn = el("resetDraft");
   const useMyLocationBtn = el("useMyLocation");
+  const submitStatus = el("submitStatus");
+
+  if (submitStatus && (!SITE_WEBAPP_URL || !SITE_SHARED_SECRET)) {
+    submitStatus.textContent = "⚠️ Для отправки заполните localStorage: aq_webapp_url и aq_webapp_secret.";
+  }
 
   function resetDraft() {
     state.category = "Освещение";
@@ -1141,6 +1218,11 @@ function initDemoForm() {
     descInput.addEventListener("input", () => {
       state.desc = descInput.value.trim();
     });
+  }
+
+  if (chatIdInput && isLoggedIn()) {
+    const currentUser = getCurrentUser();
+    chatIdInput.value = String(currentUser?.telegramChatId || currentUser?.id || "");
   }
 
   if (photoInput && photoPreview) {
@@ -1213,7 +1295,7 @@ function initDemoForm() {
     resetBtn.addEventListener("click", resetDraft);
   }
 
-  requestForm.addEventListener("submit", (e) => {
+  requestForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!isLoggedIn()) {
@@ -1222,39 +1304,96 @@ function initDemoForm() {
       return;
     }
 
+    if (submitStatus) {
+      submitStatus.textContent = "";
+      submitStatus.style.color = "";
+    }
+
     if (!state.desc) {
       alert("Опишите проблему.");
       if (descInput) descInput.focus();
       return;
     }
 
+    const hasGeo = Number.isFinite(state.lat) && Number.isFinite(state.lng);
+    const hasAddress = !!state.city;
+    if (!hasGeo && !hasAddress) {
+      alert("Нужно указать место: адрес или точку на карте.");
+      if (cityInput) cityInput.focus();
+      return;
+    }
+
     const currentUser = getCurrentUser();
     const requests = getRequests();
+
+    const classificationCategory = normalizeCategoryForSite(state.desc);
+    const classificationPriority = normalizePriorityForSite(state.desc);
+
+    const chatIdFromInput = chatIdInput ? chatIdInput.value.trim() : "";
+    const fallbackChatId = currentUser?.telegramChatId || currentUser?.id;
+    const chatId = chatIdFromInput || String(fallbackChatId || "");
+
+    if (!chatId) {
+      alert("Укажите Telegram chat_id для отправки в Google Sheets.");
+      if (chatIdInput) chatIdInput.focus();
+      return;
+    }
+
+    const payload = {
+      chat_id: chatId,
+      telegram_user_id: currentUser?.id || "",
+      user_name: currentUser?.username || "Пользователь",
+      description: state.desc,
+      lat: hasGeo ? state.lat : undefined,
+      lng: hasGeo ? state.lng : undefined,
+      address_text: state.city || "",
+      photo_file_id: "",
+      photo_url: state.photoDataUrl || "",
+      category: classificationCategory,
+      priority: classificationPriority,
+      confidence: "",
+      tags: "web;site",
+    };
 
     const requestItem = {
       id: Date.now(),
       authorId: currentUser?.id ?? null,
       authorUsername: currentUser?.username || "Пользователь",
-      category: state.category,
+      category: classificationCategory,
       city: state.city,
       description: state.desc,
       lat: state.lat,
       lng: state.lng,
       photoDataUrl: state.photoDataUrl,
-      status: "Новое",
+      status: "New",
       createdAt: new Date().toISOString(),
     };
 
-    requests.unshift(requestItem);
-    saveRequests(requests);
+    try {
+      const out = await sendRequestToAppsScript(payload);
 
-    alert("Обращение сохранено.");
+      requestItem.request_id = out.request_id || "";
+      requests.unshift(requestItem);
+      saveRequests(requests);
 
-    // при желании можно сразу открыть бота с текстом
-    // const draftText = buildDraftText();
-    // goToTelegramWithDraft(draftText);
+      if (submitStatus) {
+        submitStatus.textContent = `✅ Отправлено в Google Sheets. ID: ${out.request_id || "(без ID)"}`;
+        submitStatus.style.color = "#137333";
+      } else {
+        alert(`✅ Отправлено в Google Sheets. ID: ${out.request_id || "(без ID)"}`);
+      }
 
-    resetDraft();
+      resetDraft();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+
+      if (submitStatus) {
+        submitStatus.textContent = `❌ Ошибка отправки: ${message}. Проверьте aq_webapp_url и aq_webapp_secret в localStorage.`;
+        submitStatus.style.color = "#b3261e";
+      } else {
+        alert(`Ошибка отправки: ${message}`);
+      }
+    }
   });
 
   syncOutput();

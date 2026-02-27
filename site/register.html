@@ -1,243 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Регистрация — Aqyldy Qala</title>
   <script defer src="app.js"></script>
-
   <style>
     :root {
-      --bg: #e9e9e9;
-      --card: rgba(255, 255, 255, 0.94);
+      --bg: #ececec;
+      --card: rgba(255,255,255,.94);
       --text: #0d8fcb;
       --muted: #8b8b8b;
       --line: #e6e6e6;
       --input-bg: #fbfbfb;
       --btn: #16c6fb;
       --btn-hover: #025e8b;
-      --btn-secondary: #ffffff;
-      --btn-secondary-hover: #f0f0f0;
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      --shadow: 0 16px 40px rgba(0,0,0,.08);
     }
-
     * { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,0.45), transparent 35%),
-        linear-gradient(180deg, #ededed 0%, #e4e4e4 100%);
-    }
-
+    html, body { height: 100%; margin: 0; font-family: Inter, "Segoe UI", Arial, sans-serif; }
     body {
       display: grid;
       place-items: center;
       padding: 24px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 460px;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.65);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 38px 34px 30px;
-      backdrop-filter: blur(8px);
-    }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .top-bar a {
-      font-size: 13px;
-      text-decoration: none;
-      color: var(--muted);
-      transition: color 0.2s ease;
-    }
-
-    .top-bar a:hover {
+      background: radial-gradient(circle at top, rgba(255,255,255,.45), transparent 35%), linear-gradient(180deg, #ededed 0%, #e4e4e4 100%);
       color: var(--text);
     }
-
-    .title {
-      margin: 0 0 10px;
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-    }
-
-    .sub {
-      margin: 0 0 24px;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    .field label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    .field input {
-      width: 100%;
-      height: 48px;
-      padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--input-bg);
-      font-size: 14px;
-      color: #222;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    }
-
-    .field input:focus {
-      border-color: #bcbcbc;
-      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
-      background: #fff;
-    }
-
-    .actions {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .main-btn,
-    .secondary-btn {
-      width: 100%;
-      height: 46px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: grid;
-      place-items: center;
-      transition: transform 0.15s ease, background 0.2s ease;
-    }
-
-    .main-btn {
-      border: none;
-      background: var(--btn);
-      color: #fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-    }
-
-    .main-btn:hover {
-      background: var(--btn-hover);
-      transform: translateY(-1px);
-    }
-
-    .secondary-btn {
-      border: 1px solid #dcdcdc;
-      background: var(--btn-secondary);
-      color: #555;
-    }
-
-    .secondary-btn:hover {
-      background: var(--btn-secondary-hover);
-    }
-
-    .bottom-note {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #9a9a9a;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 520px) {
-      .card {
-        padding: 28px 22px 24px;
-      }
-
-      .title {
-        font-size: 22px;
-      }
-    }
+    .card { width: 100%; max-width: 460px; background: var(--card); border: 1px solid rgba(255,255,255,.65); border-radius: 18px; box-shadow: var(--shadow); padding: 36px 32px 28px; }
+    .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .top a { color: var(--muted); text-decoration: none; font-size: 13px; }
+    .top a:hover { color: var(--text); }
+    .title { margin: 0 0 10px; font-size: 28px; text-transform: uppercase; }
+    .sub { margin: 0 0 22px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    .field input { width: 100%; height: 48px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: var(--input-bg); }
+    .actions { display: grid; gap: 10px; margin-top: 8px; }
+    .main-btn,.secondary-btn { height: 46px; border-radius: 999px; display: grid; place-items: center; text-decoration: none; font-weight: 600; }
+    .main-btn { border: none; background: var(--btn); color: #fff; cursor: pointer; }
+    .main-btn:hover { background: var(--btn-hover); }
+    .secondary-btn { border: 1px solid #dcdcdc; color: #555; background: #fff; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="top-bar">
+    <div class="top">
       <a href="index.html">← На главную</a>
       <a href="login.html">Уже есть аккаунт? Вход</a>
-      
     </div>
 
     <h1 class="title">Регистрация</h1>
-    <p class="sub">
-      Создайте аккаунт, чтобы отправлять обращения и сохранять данные пользователя на сайте.
-    </p>
+    <p class="sub">Создайте аккаунт, после этого вы будете автоматически авторизованы.</p>
 
     <form id="registerForm" novalidate>
       <div class="field">
         <label for="registerUsername">Имя пользователя</label>
-        <input
-          type="text"
-          id="registerUsername"
-          name="registerUsername"
-          placeholder="Введите имя пользователя"
-          autocomplete="username"
-          required
-        />
+        <input id="registerUsername" type="text" autocomplete="username" required />
       </div>
 
       <div class="field">
         <label for="registerEmail">Электронная почта</label>
-        <input
-          type="email"
-          id="registerEmail"
-          name="registerEmail"
-          placeholder="Введите email"
-          autocomplete="email"
-          required
-        />
+        <input id="registerEmail" type="email" autocomplete="email" required />
       </div>
 
       <div class="field">
         <label for="registerPassword">Пароль</label>
-        <input
-          type="password"
-          id="registerPassword"
-          name="registerPassword"
-          placeholder="Введите пароль"
-          autocomplete="new-password"
-          required
-        />
+        <input id="registerPassword" type="password" autocomplete="new-password" required />
       </div>
 
       <div class="field">
         <label for="registerPasswordConfirm">Повторите пароль</label>
-        <input
-          type="password"
-          id="registerPasswordConfirm"
-          name="registerPasswordConfirm"
-          placeholder="Повторите пароль"
-          autocomplete="new-password"
-          required
-        />
+        <input id="registerPasswordConfirm" type="password" autocomplete="new-password" required />
       </div>
 
       <div class="actions">
@@ -245,11 +78,6 @@
         <a href="index.html" class="secondary-btn">На главную</a>
       </div>
     </form>
-
-    <div class="bottom-note">
-      После успешной регистрации вы автоматически войдёте в аккаунт
-      и будете перенаправлены на главную страницу.
-    </div>
   </div>
 </body>
 </html>

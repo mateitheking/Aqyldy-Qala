@@ -104,12 +104,12 @@ async function openAIClassify(textRaw) {
     "Low = non-urgent / cosmetic / minor (graffiti, stickers, posters, minor cleanup, faded signs, aesthetic improvements). " +
     "Medium = everything else. " +
     "Confidence: 0..1. Use lower confidence if ambiguous. " +
-    "Tags: short English keywords." +
-    + "Examples: " +
-    + "Text: 'Несрочно: граффити на стене, по возможности закрасить' => priority Low, category Safety? no, category Unsorted or Trash, confidence ~0.7. " +
-    + "Text: 'Не горит фонарь возле дома' => category Lighting, priority Medium. " +
-    + "Text: 'Искрит провод, опасно' => category Safety, priority High. " +
-    + "Text: 'Низкий приоритет: наклейки на остановке' => priority Low, category Trash or Unsorted. ";
+    "Tags: short English keywords. " +
+    "Examples: " +
+    "Text: 'Несрочно: граффити на стене, по возможности закрасить' => priority Low, category Unsorted or Trash, confidence ~0.7. " +
+    "Text: 'Не горит фонарь возле дома' => category Lighting, priority Medium. " +
+    "Text: 'Искрит провод, опасно' => category Safety, priority High. " +
+    "Text: 'Низкий приоритет: наклейки на остановке' => priority Low, category Trash or Unsorted. ";
 
   const resp = await client.responses.create({
     model: OPENAI_MODEL,

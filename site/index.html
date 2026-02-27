@@ -120,6 +120,11 @@
                   <input id="cityInput" type="text" value="Петропавловск" />
                 </div>
 
+                <div class="field">
+                  <label>Telegram chat_id (для уведомлений)</label>
+                  <input id="chatIdInput" type="text" placeholder="Например: 123456789" />
+                </div>
+
                 <div class="field fieldFull">
                   <label>Описание проблемы</label>
                   <textarea
@@ -152,9 +157,7 @@
                 <button class="btn ghost" id="resetDraft" type="button">Сбросить</button>
               </div>
 
-              <div class="small muted" style="margin-top:10px">
-                Для отправки в Telegram используйте кнопки «Открыть бота».
-              </div>
+              <div id="submitStatus" class="small muted" style="margin-top:10px"></div>
             </form>
           </div>
 
