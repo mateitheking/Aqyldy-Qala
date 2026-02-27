@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aqyldy Qala — городские обращения</title>
+  <meta name="description" content="Сайт-проводник к Telegram-боту Aqyldy Qala + форма обращения." />
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+<header class="siteHeader">
+  <div class="container headerInner">
+    <a class="brand" href="index.html" aria-label="На главную">
+      <img class="brandLogo" src="assets/logo.png" alt="Aqyldy Qala" />
+      <div class="brandText">
+        <div class="brandTitle">Aqyldy Qala</div>
+        <div class="brandSub">Городские обращения в 1 минуту</div>
+      </div>
+    </a>
+
+    <nav class="headerNav" aria-label="Навигация">
+      <a class="navLink" href="requests.html">Все обращения</a>
+      <a class="navLink" href="profile.html">Профиль</a>
+    </nav>
+
+    <div class="headerActions">
+      <a id="registerBtnDesktop" class="btn ghost" href="register.html">Регистрация</a>
+      <a id="loginBtnDesktop" class="btn primary" href="login.html">Вход</a>
+
+      <div
+        id="userBoxDesktop"
+        style="display:none; padding:10px 14px; border-radius:999px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); font-size:14px;"
+      >
+        Привет, <strong id="headerUsername"></strong>
+      </div>
+
+      <button id="logoutBtnDesktop" class="btn ghost" type="button" style="display:none;">Выйти</button>
+
+      <a id="openBotTop" class="btn primary" href="#">Открыть бота</a>
+
+      <button id="burger" class="burger" type="button" aria-label="Открыть меню">
+        <span></span><span></span><span></span>
+      </button>
+      
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="mobileMenu">
+    <a href="requests.html">Все обращения</a>
+    <a href="profile.html">Профиль</a>
+
+    <a id="registerBtnMobile" href="register.html">Регистрация</a>
+    <a id="loginBtnMobile" href="login.html">Вход</a>
+
+    <div id="userBoxMobile" style="display:none; padding:10px 0;">
+      Привет, <strong id="mobileUsername"></strong>
+    </div>
+
+    <a id="logoutBtnMobile" href="#" style="display:none;">Выйти</a>
+    <a id="openBotMobile" href="#">Открыть бота</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container">
+      <div class="heroTop">
+        <div class="badge"><i></i> Aqyldy Qala — «Единое приложение горожанина»</div>
+        <h1>Сообщайте о проблемах города за 1 минуту</h1>
+        <br>
+
+        <div class="ctaRow">
+          <a class="btn primary" href="requests.html">Посмотреть все обращения</a>
+        </div>
+        <br>
+        <div class="hint">
+          Для подачи обращения нужен вход. Если аккаунта ещё нет — зарегистрируйтесь.
+        </div>
+      </div>
+
+      <div class="island">
+        <div class="islandHeader">
+          <div class="islandTitle">Создать обращение</div>
+          <div class="islandPills">
+            <span class="pill">Фото + описание</span>
+            
+            <span class="pill">Точка на карте</span>
+          </div>
+        </div>
+
+        <div class="islandGrid">
+          <div class="exampleCard">
+            <div class="exampleTop">
+              <div class="chip gray">Форма обращения</div>
+              <div class="chip success"><i></i>&nbsp;Статус: черновик</div>
+            </div>
+
+            <form id="requestForm">
+              <div class="photoUpload">
+                <label class="photoDrop" for="photoInput">
+                  <input id="photoInput" type="file" accept="image/*" />
+                  <div class="photoPreview" id="photoPreview">
+                    <div class="photoPlaceholder">
+                      Нажмите или перетащите фото<br><span class="photoSub">JPG / PNG</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <div class="formGrid">
+                
+
+                <div class="field">
+                  <label>Город / район ,улица ,дом</label>
+                  <input id="cityInput" type="text" value="Петропавловск" />
+                </div>
+
+                <div class="field fieldFull">
+                  <label>Описание проблемы</label>
+                  <textarea
+                    id="descInput"
+                    rows="3"
+                    placeholder="Коротко опишите: что сломано, где, насколько срочно"
+                  ></textarea>
+                  
+                </div>
+
+                <div class="field fieldFull">
+                  <label>Точка на карте (По возможности)</label>
+                  <div class="coordRow">
+                    <input id="latInput" type="text" readonly placeholder="Широта (lat)" />
+                    <input id="lngInput" type="text" readonly placeholder="Долгота (lng)" />
+                    <button class="btn smallBtn" id="useMyLocation" type="button">Моё местоположение</button>
+                  </div>
+                  <div class="small muted">Кликните по карте справа — маркер станет на точку.</div>
+                </div>
+              </div>
+
+              <div class="rows" style="margin-top:10px">
+                
+                <div class="row"><span>Локация</span><b id="outCity">Петропавловск</b></div>
+                <div class="row"><span>Координаты</span><b id="outCoords">—</b></div>
+              </div>
+
+              <div class="ctaRow" style="margin-top:12px">
+                <button class="btn primary" type="submit">Отправить</button>
+                <button class="btn ghost" id="resetDraft" type="button">Сбросить</button>
+              </div>
+
+              <div class="small muted" style="margin-top:10px">
+                Для отправки в Telegram используйте кнопки «Открыть бота».
+              </div>
+            </form>
+          </div>
+
+          <div class="mapCard">
+            <div class="mapHead">
+              <div>
+                <div class="mapTitle">Карта выбора точки (OSM)</div>
+                <div class="mapSub">Кликните по карте — маркер поставится на место проблемы.</div>
+              </div>
+
+              <a class="btn smallBtn" id="openBotMap" href="#" rel="noopener">Открыть бота</a>
+            </div>
+
+            <div class="mapWrap">
+              <div id="leafletMap" class="leafletMap" aria-label="Карта выбора точки"></div>
+            </div>
+
+            <div class="mapNote">
+              В Telegram потом можно отправить геолокацию точкой — и обращение будет привязано к месту.
+            </div>
+          </div>
+        </div>
+
+        <div class="islandFooter">
+          <div class="botInfoCard">
+            <div class="botInfoTitle">Telegram-бот Aqyldy Qala</div>
+            <div class="botInfoSub">
+              Откройте бота, чтобы отправить обращение напрямую через Telegram.
+            </div>
+
+            <div class="botActions">
+              <a id="openBotInline" class="btn primary" href="#" rel="noopener">
+                Открыть в Telegram
+              </a>
+
+              <div class="botUrlPill">
+                <span class="botUrlLabel">Ссылка:</span>
+                <span id="botLinkText" class="botUrlText"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="qrWrap qrCard">
+            <div class="qrTitle">QR-код для быстрого входа</div>
+
+            <div class="qr" id="qrBox">
+              QR<br><span class="qrSub">(будет)</span>
+            </div>
+
+            <div class="small muted">
+              Если сайт открыт на компьютере — отсканируйте QR телефоном.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <h2 class="sectionTitle">Вопросы и ответы</h2>
+
+      <div class="faq" id="faqList">
+        <div class="faqItem">
+          <button class="faqBtn" type="button">
+            Нужно ли устанавливать отдельное приложение?
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <div class="faqPanel">Нет. Это сайт + Telegram-бот.</div>
+        </div>
+
+        <div class="faqItem">
+          <button class="faqBtn" type="button">
+            Где посмотреть историю обращений?
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <div class="faqPanel">В разделе «Профиль» и на странице «Все обращения».</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="footLeft">
+        <div class="copy">© <span id="year"></span> Aqyldy Qala</div>
+      </div>
+      <div class="footRight">
+        <a class="btn primary" id="openBotFooter" href="#" rel="noopener">Открыть бота</a>
+        <a class="btn ghost" href="#top">Наверх</a>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

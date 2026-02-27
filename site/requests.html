@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Все обращения — Aqyldy Qala</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+<header class="siteHeader">
+  <div class="container headerInner">
+    <a class="brand" href="index.html">
+      <img class="brandLogo" src="assets/logo.png" alt="Aqyldy Qala" />
+      <div class="brandText">
+        <div class="brandTitle">Aqyldy Qala</div>
+        <div class="brandSub">Все обращения</div>
+      </div>
+    </a>
+
+    <nav class="headerNav">
+      <a class="navLink" href="index.html">Создать</a>
+      <a class="navLink" href="requests.html">Все обращения</a>
+      <a class="navLink" href="profile.html">Профиль</a>
+    </nav>
+
+    <div class="headerActions">
+      <a class="btn primary" href="profile.html">Профиль</a>
+      <button class="burger" id="burger" type="button"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="mobileMenu">
+    <a href="index.html">Создать</a>
+    <a href="requests.html">Все обращения</a>
+    <a href="profile.html">Профиль</a>
+  </div>
+  
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="island">
+        <div class="islandHeader">
+          <div class="islandTitle">Все обращения</div>
+          <div class="islandPills">
+            <span class="pill">Поиск</span>
+            <span class="pill">Фильтр “мои”</span>
+          </div>
+        </div>
+
+        <div class="formGrid" style="margin-top:0">
+          <div class="field">
+            <label>Поиск (категория / город / текст / номер)</label>
+            <input id="filterQuery" type="text" placeholder="Например: освещение, AQ-000010, мусор..." />
+          </div>
+
+          <div class="field">
+            <label>Показать только мои</label>
+            <select id="filterMine">
+              <option value="no" selected>Нет</option>
+              <option value="yes">Да</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="allRequestsList" class="reqList" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="copy">© <span id="year"></span> Aqyldy Qala</div>
+  </div>
+</footer>
+
+<script>
+  // маленький мост, чтобы filterMine работал как checkbox
+  document.addEventListener("DOMContentLoaded", () => {
+    const sel = document.getElementById("filterMine");
+    if (!sel) return;
+    // app.js ожидает checkbox — мы сделаем псевдо
+    // создадим скрытый checkbox, а сел будет управлять им
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = "filterMine";
+    cb.style.display = "none";
+    sel.parentNode.appendChild(cb);
+
+    sel.addEventListener("change", () => {
+      cb.checked = sel.value === "yes";
+      cb.dispatchEvent(new Event("change"));
+    });
+  });
+</script>
+
+</body>
+</html>
