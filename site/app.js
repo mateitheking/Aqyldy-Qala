@@ -940,6 +940,7 @@ function bindBotLinks() {
     "openBotCta",
     "openBotFooter",
     "openBotMobile",
+    "openBotMap",
     "openBotInline"
   ];
 
