@@ -1,7 +1,7 @@
-# gov-smart-city
+# Aqyldy-Qala
 Telegram bot + Site + Webview app for Android/iOS (Kazakhstan Government smart city system)
 
-# Gov Smart City — Smart Citizen MVP (Telegram Bot + Web + WebView)
+# Aqyldy-Qala — Smart Citizen MVP (Telegram Bot + Web + WebView)
 
 MVP “Single citizen app” for reporting city issues (roads, lighting, trash, etc.) via **Telegram bot** and **web form**, storing requests in **Google Sheets**, with optional **AI classification** and **status notifications**.
 
